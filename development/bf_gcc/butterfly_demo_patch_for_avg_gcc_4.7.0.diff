@@ -1,0 +1,129 @@
+diff -ru /Users/bert/Projekte/Elektronik/_abgeschlossen/avr_testboard/bf_official_demo_gcc_20091217/ADC.c bf_gcc/ADC.c
+--- /Users/bert/Projekte/Elektronik/_abgeschlossen/avr_testboard/bf_official_demo_gcc_20091217/ADC.c	2009-07-02 15:41:52.000000000 +0200
++++ bf_gcc/ADC.c	2012-06-29 19:14:37.000000000 +0200
+@@ -233,7 +233,7 @@
+             //LCD character 1 is allready written to
+             LCD_putc(2, TH);
+             LCD_putc(3, TL);
+-            LCD_putc(4, '*');
++            LCD_putc(4, '.');
+             LCD_putc(5, 'C');
+             LCD_putc(6, '\0');
+         }
+@@ -267,7 +267,7 @@
+ 
+             LCD_putc(2, TH);
+             LCD_putc(3, TL);
+-            LCD_putc(4, '*');
++            LCD_putc(4, '.');
+             LCD_putc(5, 'F');
+             LCD_putc(6, '\0');
+         
+diff -ru /Users/bert/Projekte/Elektronik/_abgeschlossen/avr_testboard/bf_official_demo_gcc_20091217/LCD_driver.c bf_gcc/LCD_driver.c
+--- /Users/bert/Projekte/Elektronik/_abgeschlossen/avr_testboard/bf_official_demo_gcc_20091217/LCD_driver.c	2007-01-31 04:36:56.000000000 +0100
++++ bf_gcc/LCD_driver.c	2012-06-29 19:15:05.000000000 +0200
+@@ -75,15 +75,30 @@
+ 
+ // Look-up table used when converting ASCII to
+ // LCD display data (segment control)
++// 
++//     outer segments                inner segments 
++//            0001
++//         *********                       0080
++//       *     *     *              0020    *    0008
++//  0040 * *   *   * * 0010             *   *   * 
++//       *  *  *  *  *                   *  *  *  
++//       *   * * *   *                    * * *   
++//         ***   ***               0200 ***   *** 0800
++//       *   * * *   *                    * * *   
++//  0400 *  *  *  *  * 0100              *  *  *  
++//       * *   *   * *                  *   *   * 
++//       *     *     *              4000    *    8000
++//         **********                      2000
++//            1000
+ // mt __flash unsigned int LCD_character_table[] =
+-unsigned int LCD_character_table[] PROGMEM =
++const unsigned int LCD_character_table[] PROGMEM =
+ {
+-    0x0A51,     // '*' (?)
++    0xEAA8,     // '*'
+     0x2A80,     // '+'
+-    0x0000,     // ',' (Not defined)
++    0x4000,     // ','
+     0x0A00,     // '-'
+     0x0A51,     // '.' Degree sign
+-    0x0000,     // '/' (Not defined)
++    0x4008,     // '/'
+     0x5559,     // '0'
+     0x0118,     // '1'
+     0x1e11,     // '2
+@@ -96,9 +111,9 @@
+     0x1b51,     // '9'
+     0x0000,     // ':' (Not defined)
+     0x0000,     // ';' (Not defined)
+-    0x0000,     // '<' (Not defined)
+-    0x0000,     // '=' (Not defined)
+-    0x0000,     // '>' (Not defined)
++    0x8008,     // '<'
++    0x1A00,     // '='
++    0x4020,     // '>'
+     0x0000,     // '?' (Not defined)
+     0x0000,     // '@' (Not defined)
+     0x0f51,     // 'A' (+ 'a')
+@@ -127,11 +142,11 @@
+     0xc028,     // 'X' (+ 'x')
+     0x2028,     // 'Y' (+ 'y')
+     0x5009,     // 'Z' (+ 'z')
+-    0x0000,     // '[' (Not defined)
+-    0x0000,     // '\' (Not defined)
+-    0x0000,     // ']' (Not defined)
++    0x1441,     // '['
++    0x8020,     // '\'
++    0x1111,     // ']'
+     0x0000,     // '^' (Not defined)
+-    0x0000      // '_'
++    0x1000      // '_'
+ };
+ 
+ 
+diff -ru /Users/bert/Projekte/Elektronik/_abgeschlossen/avr_testboard/bf_official_demo_gcc_20091217/RTC.c bf_gcc/RTC.c
+--- /Users/bert/Projekte/Elektronik/_abgeschlossen/avr_testboard/bf_official_demo_gcc_20091217/RTC.c	2009-03-12 14:24:54.000000000 +0100
++++ bf_gcc/RTC.c	2012-06-29 06:38:03.000000000 +0200
+@@ -86,7 +86,7 @@
+ //__flash char __flash *DATEFORMAT_TEXT[] = {EUROPEAN_DATE_TEXT, AMERICAN_DATE_TEXT, CANADIAN_DATE_TEXT};
+ //__flash char __flash *DATE_FORMAT_NR[] = {EUROPEAN_DATE_NR, AMERICAN_DATE_NR, CANADIAN_DATE_NR};
+ PGM_P DATEFORMAT_TEXT[] = {EUROPEAN_DATE_TEXT, AMERICAN_DATE_TEXT, CANADIAN_DATE_TEXT};
+-const uint8_t *DATE_FORMAT_NR[] PROGMEM = {EUROPEAN_DATE_NR, AMERICAN_DATE_NR, CANADIAN_DATE_NR};
++const uint8_t *const DATE_FORMAT_NR[] PROGMEM = {EUROPEAN_DATE_NR, AMERICAN_DATE_NR, CANADIAN_DATE_NR};
+ //mtE
+ 
+ 
+Only in /Users/bert/Projekte/Elektronik/_abgeschlossen/avr_testboard/bf_official_demo_gcc_20091217/: bf_gcc_20091217.zip
+diff -ru /Users/bert/Projekte/Elektronik/_abgeschlossen/avr_testboard/bf_official_demo_gcc_20091217/sound.c bf_gcc/sound.c
+--- /Users/bert/Projekte/Elektronik/_abgeschlossen/avr_testboard/bf_official_demo_gcc_20091217/sound.c	2007-06-05 19:37:44.000000000 +0200
++++ bf_gcc/sound.c	2012-06-29 19:11:26.000000000 +0200
+@@ -91,9 +91,9 @@
+         };
+ 
+ 
+-char TEXT_SONG4[] PROGMEM    = "Auld Lang Syne";
++const char TEXT_SONG4[] PROGMEM    = "Auld Lang Syne";
+ 
+-int AuldLangSyne[] PROGMEM = 
++const int AuldLangSyne[] PROGMEM = 
+         {  
+             3, 
+             4,g2, 2,c3, 8,c3, 4,c3, 4,e3, 2,d3, 8,c3, 4,d3, 8,e3, 8,d3, 2,c3, 
+@@ -166,10 +166,10 @@
+ 
+ // pointer-array with pointers to the song arrays
+ // mt: __flash int __flash *Songs[]    = { FurElise, Mozart, /*Minuet, AuldLangSyne,*/ Sirene1, Sirene2, Whistle, 0};
+-const int *Songs[] PROGMEM   = { FurElise, Mozart, Minuet, AuldLangSyne, Sirene1, Sirene2, Whistle, Exorcist, 0 };
++const int *const Songs[] PROGMEM   = { FurElise, Mozart, Minuet, AuldLangSyne, Sirene1, Sirene2, Whistle, Exorcist, 0 };
+ 
+ //mt: __flash char __flash *TEXT_SONG_TBL[]    = { TEXT_SONG1, TEXT_SONG2, /*TEXT_SONG3, TEXT_SONG4,*/TEXT_SONG5, TEXT_SONG6, TEXT_SONG7, 0};
+-PGM_P TEXT_SONG_TBL[] PROGMEM   = { TEXT_SONG1, TEXT_SONG2, TEXT_SONG3, TEXT_SONG4, TEXT_SONG5, TEXT_SONG6, TEXT_SONG7, TEXT_SONG8, 0 };
++const PGM_P const TEXT_SONG_TBL[] PROGMEM   = { TEXT_SONG1, TEXT_SONG2, TEXT_SONG3, TEXT_SONG4, TEXT_SONG5, TEXT_SONG6, TEXT_SONG7, TEXT_SONG8, 0 };
+ // const char *TEXT_SONG_TBL[]    = { TEXT_SONG1, TEXT_SONG2, TEXT_SONG3, TEXT_SONG4, TEXT_SONG5, TEXT_SONG6, TEXT_SONG7, 0};
+ 
+ //__flash char PLAYING[]          = "PLAYING";
