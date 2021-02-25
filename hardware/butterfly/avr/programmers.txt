@@ -1,0 +1,15 @@
+avr109.name=AVR109
+avr109.protocol=avr109
+avr109.communication=serial
+avr109.speed=9600
+avr109.program.protocol=avr109
+avr109.program.tool=avrdude
+avr109.program.speed=9600
+avr109.program.extra_params=-P{serial.port} -b{program.speed}
+
+avrispmkii.name=AVRISP mkII
+avrispmkii.communication=usb
+avrispmkii.protocol=stk500v2
+avrispmkii.program.protocol=stk500v2
+avrispmkii.program.tool=avrdude
+avrispmkii.program.extra_params=-Pusb
